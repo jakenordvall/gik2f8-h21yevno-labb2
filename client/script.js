@@ -62,7 +62,7 @@ function onSubmit(e) {
   e.preventDefault();
 
   if (titleValid && descriptionValid && dueDateValid) {
-    console.log("Submittsky");
+    //console.log("Submittsky");
     saveTask();
   }
 
@@ -85,11 +85,18 @@ function onSubmit(e) {
 function renderList() {
   api.getAll().then((tasks) => {
     tasks.sort((a, b) => {
-      const taskA = new Date(a.dueDate);
-      const taskB = new Date(b.dueDate);
-
-      if (taskA < taskB) return -1;
-      if (taskA > taskB) return 1;
+      if (a.completed && !b.completed) {
+        return 1;
+      }
+      if (!a.completed && b.completed) {
+        return -1;
+      }
+      if (a.dueDate < b.dueDate) {
+        return -1;
+      }
+      if (a.dueDate > b.dueDate) {
+        return 1;
+      }
       return 0;
     });
     todoListElement.innerHTML = "";
@@ -158,7 +165,7 @@ function editTasks(checkbox) {
         completed: false,
       };
       api.patch(checkbox.id, completed).then((result) => {
-        //console.log(result);
+        console.log(result);
         renderList();
       });
     }
@@ -167,6 +174,7 @@ function editTasks(checkbox) {
 
 function deleteTask(id) {
   api.remove(id).then((result) => {
+    console.log(result);
     renderList();
   });
 }
